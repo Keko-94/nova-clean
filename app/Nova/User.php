@@ -3,11 +3,18 @@
 namespace App\Nova;
 
 use App\Nova\Actions\ChangeCreatedAt;
+use App\Nova\Actions\Jobijoba;
 use App\Nova\Lenses\UserLens;
+use App\Rules\RequiredFile;
 use Illuminate\Validation\Rules;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\File;
+use Laravel\Nova\Fields\FormData;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -45,6 +52,13 @@ class User extends Resource
     public static $clickAction = 'ignore';
 
     /**
+     * Indicates whether the resource should automatically poll for new resources.
+     *
+     * @var bool
+     */
+    public static $polling = false;
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
@@ -71,6 +85,41 @@ class User extends Resource
                 ->onlyOnForms()
                 ->creationRules('required', Rules\Password::defaults())
                 ->updateRules('nullable', Rules\Password::defaults()),
+
+//            DateTime::make('created_at'),
+//
+//            File::make('File')
+//                ->rules([new RequiredFile]),
+//
+//            Text::make('Test')
+//                ->rules([new RequiredFile]),
+//
+//            Text::make('Test2')
+//                ->rules(new RequiredFile), // doesn't work without array
+
+            Select::make('Size')->options([
+                'S' => 'Small',
+                'M' => 'Medium',
+                'L' => 'Large',
+            ]),
+
+            BelongsTo::make('Post')
+                ->hide()
+                ->nullable()
+                ->searchable()
+                ->showCreateRelationButton()
+                ->dependsOn('size', function (BelongsTo $field, NovaRequest $request, FormData $formData) {
+                    if ($formData->size === 'S') {
+                        $field->show();
+                    } else {
+                        $field->setValue(null);
+                    }
+                }),
+
+            Text::make('Post Value')
+                ->dependsOn('post', function (Text $field, NovaRequest $request, FormData $formData) {
+                    $field->setValue($formData->post);
+                })
         ];
     }
 
@@ -118,7 +167,9 @@ class User extends Resource
     public function actions(NovaRequest $request)
     {
         return [
-            ChangeCreatedAt::make()->sole()
+            //ChangeCreatedAt::make()->sole(),
+            Jobijoba::make(),
+            ChangeCreatedAt::make()->standalone(),
         ];
     }
 }

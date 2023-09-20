@@ -44,8 +44,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function learnerTrainingGroup(): BelongsTo
+    public function post(): BelongsTo
     {
-        return $this->belongsTo(LearnerTrainingGroup::class);
+        return $this->belongsTo(Post::class);
     }
 }
