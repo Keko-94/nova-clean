@@ -17,6 +17,7 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Lupennat\NestedMany\Fields\HasManyNested;
 
 class User extends Resource
 {
@@ -97,29 +98,31 @@ class User extends Resource
 //            Text::make('Test2')
 //                ->rules(new RequiredFile), // doesn't work without array
 
+
+//
+//            BelongsTo::make('Post')
+//                ->hide()
+//                ->nullable()
+//                ->searchable()
+//                ->showCreateRelationButton()
+//                ->dependsOn('size', function (BelongsTo $field, NovaRequest $request, FormData $formData) {
+//                    if ($formData->size === 'S') {
+//                        $field->show();
+//                    } else {
+//                        $field->setValue(null);
+//                    }
+//                }),
+//
+//            Text::make('Post Value')
+//                ->dependsOn('post', function (Text $field, NovaRequest $request, FormData $formData) {
+//                    $field->setValue($formData->post);
+//                })
+
             Select::make('Size')->options([
                 'S' => 'Small',
                 'M' => 'Medium',
                 'L' => 'Large',
             ]),
-
-            BelongsTo::make('Post')
-                ->hide()
-                ->nullable()
-                ->searchable()
-                ->showCreateRelationButton()
-                ->dependsOn('size', function (BelongsTo $field, NovaRequest $request, FormData $formData) {
-                    if ($formData->size === 'S') {
-                        $field->show();
-                    } else {
-                        $field->setValue(null);
-                    }
-                }),
-
-            Text::make('Post Value')
-                ->dependsOn('post', function (Text $field, NovaRequest $request, FormData $formData) {
-                    $field->setValue($formData->post);
-                })
         ];
     }
 
@@ -169,7 +172,7 @@ class User extends Resource
         return [
             //ChangeCreatedAt::make()->sole(),
             Jobijoba::make(),
-            ChangeCreatedAt::make()->standalone(),
+            ChangeCreatedAt::make()->onlyInline(),
         ];
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -44,8 +45,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function post(): BelongsTo
+    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->belongsTo(Post::class);
+        return $this->hasMany(Post::class);
     }
 }
